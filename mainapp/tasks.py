@@ -3,6 +3,9 @@ from conf.celery import app
 from .main import ChildBot
 from .models import InstagramUser
 
+import os
+import glob
+
 
 @app.task()
 def create_new_instagram_user(insta_username):
@@ -19,5 +22,7 @@ def create_new_instagram_user(insta_username):
         avg_amount_likes_on_last_20_posts=avr_20_likers,
         subscriptions=follwoing_len
     )
-    print(new_user, 'DEBUG')
+    cookie_del = glob.glob("config/*cookie.json")
+    if cookie_del:
+        os.remove(cookie_del[0])
     return True
