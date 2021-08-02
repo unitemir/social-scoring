@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  django:
+    build: .
+    working_dir: /code
+    volumes:
+      - .:/code
+    command: bash -c "python manage.py runserver 0.0.0.0:8000 --nothreading --noreload"
+    ports:
+      - "8000:8000"
+  rabbitmq:
+    image: 'rabbitmq:3.6-management-alpine'
+    ports:
+      - '15672:15672'
+    depends_on:
+      - django
+  celery:
+    build: .
+    working_dir: /code
+    volumes:
+      - .:/code
+    command:  celery -A conf.celery worker -l INFO
+    depends_on:
+      - django
+      - rabbitmq
