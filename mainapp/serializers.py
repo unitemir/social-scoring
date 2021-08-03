@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
-from .models import InstagramUser
+from .models import Person
 
 
 class CreateInstagramUserSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = InstagramUser
+        model = Person
         fields = "__all__"

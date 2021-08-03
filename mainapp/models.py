@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class InstagramUser(models.Model):
+class Person(models.Model):
 
     qty_subscribers = models.PositiveIntegerField('Количество подписчиков')
     qty_posts = models.PositiveIntegerField('Количество постов')

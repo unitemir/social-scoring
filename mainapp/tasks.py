@@ -1,7 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 from conf.celery import app
 from .main import ChildBot
-from .models import InstagramUser
+from .models import Person
 
 import os
 import glob
@@ -15,7 +15,7 @@ def create_new_instagram_user(insta_username):
     avr_likers = user.get_avr_likers(insta_username)
     avr_20_likers = user.get_20_avr_likers(insta_username)
     follwoing_len = user.get_follwoing_len(insta_username)
-    new_user = InstagramUser.objects.create(
+    new_user = Person.objects.create(
         qty_subscribers=followers_len,
         qty_posts=total_len_posts,
         avg_amount_likes_on_all_posts=avr_likers,
