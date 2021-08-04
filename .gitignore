@@ -324,5 +324,3 @@ fabric.properties
 
 .idea/
 config/
-
-mainapp/migrations/0001_initial.py

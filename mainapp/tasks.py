@@ -21,6 +21,7 @@ def create_new_instagram_user(insta_username):
     avr_20_likers = user.get_20_avr_likers(insta_username)
     follwoing_len = user.get_follwoing_len(insta_username)
     new_user = Person.objects.create(
+        social_network='Instagram',
         qty_subscribers=followers_len,
         qty_posts=total_len_posts,
         avg_amount_likes_on_all_posts=avr_likers,
@@ -35,60 +36,41 @@ def create_new_instagram_user(insta_username):
 
 @app.task()
 def create_new_vk_person(page_id):
-
     url = f'https://api.vk.com/method/users.get?user_ids={page_id}&v=5.92&access_token={access_token}'
     response = requests.get(url).json()
     user_id = response['response'][0]['id']
     avg_amount_likes_on_last_20_posts = 0
-
-    try:
-        url = f'https://api.vk.com/method/users.getFollowers?user_id={user_id}&count=1000&v=5.92&access_token={access_token}'
-        r = requests.get(url)
-        qty_subscribers = r.json()['response']['count']
-    except:
-        pass
-
-    try:
-        url = f'https://api.vk.com/method/wall.get?owner_id={user_id}&count=100&v=5.92&access_token={access_token}'
-        r = requests.get(url)
-        qty_posts = r.json()['response']['count']
-    except:
-        pass
-
-    try:
-        url = f'https://api.vk.com/method/wall.get?owner_id={user_id}&count=100&v=5.92&access_token={access_token}'
-        r = requests.get(url)
-        posts = r.json()
-        likes = []
-        last_20_likes = []
-        for item in posts['response']['items']:
-            likes.append(item['likes']['count'])
+    url = f'https://api.vk.com/method/users.getFollowers?user_id={user_id}&count=1000&v=5.92&access_token={access_token}'
+    r = requests.get(url)
+    qty_subscribers = r.json()['response']['count']
+    url = f'https://api.vk.com/method/wall.get?owner_id={user_id}&count=100&v=5.92&access_token={access_token}'
+    r = requests.get(url)
+    qty_posts = r.json()['response']['count']
+    url = f'https://api.vk.com/method/wall.get?owner_id={user_id}&count=100&v=5.92&access_token={access_token}'
+    r = requests.get(url)
+    posts = r.json()
+    likes = []
+    last_20_likes = []
+    for item in posts['response']['items']:
+        likes.append(item['likes']['count'])
+    else:
+        avg_amount_likes_on_all_posts = sum(likes) / posts['response']['count']
+    if posts['response']['count'] >= 20:
+        for item in posts['response']['items'][:20]:
+            last_20_likes.append(item['likes']['count'])
         else:
-            avg_amount_likes_on_all_posts = sum(likes) / posts['response']['count']
-        if posts['response']['count'] >= 20:
-            for item in posts['response']['items'][:20]:
-                last_20_likes.append(item['likes']['count'])
-            else:
-                avg_amount_likes_on_last_20_posts = sum(last_20_likes) / posts['response']['count']
-        if posts['response']['count'] <= 20:
-            pass
-    except:
+            avg_amount_likes_on_last_20_posts = sum(last_20_likes) / posts['response']['count']
+    if posts['response']['count'] <= 20:
         pass
-
-    try:
-        url = f'https://api.vk.com/method/users.getSubscriptions?user_id={user_id}&count=200&v=5.92&access_token={access_token}'
-        r = requests.get(url)
-        subscriptions = r.json()['response']['users']['count']
-    except:
-        pass
-
+    url = f'https://api.vk.com/method/users.getSubscriptions?user_id={user_id}&count=200&v=5.92&access_token={access_token}'
+    r = requests.get(url)
+    subscriptions = r.json()['response']['users']['count']
     new_user = Person.objects.create(
-        social_network='vk',
+        social_network='VK',
         qty_subscribers=qty_subscribers,
         qty_posts=qty_posts,
         avg_amount_likes_on_all_posts=avg_amount_likes_on_all_posts,
         avg_amount_likes_on_last_20_posts=avg_amount_likes_on_last_20_posts,
         subscriptions=subscriptions
     )
-
     return True
