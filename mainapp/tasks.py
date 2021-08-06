@@ -23,6 +23,9 @@ import time
 
 from random import randint, random
 
+from random_user_agent.user_agent import UserAgent
+from random_user_agent.params import SoftwareName, OperatingSystem
+
 
 def get_random_number():
     return randint(4, 15) * random()
@@ -98,9 +101,20 @@ def get_facebook_friends_list(facebook_id):
     chrome_options = Options()
     # chrome_options.add_argument("--disable-notifications")
 
+    software_names = [SoftwareName.CHROME.value]
+    operating_systems = [OperatingSystem.WINDOWS.value,
+                         OperatingSystem.LINUX.value]
+    user_agent_rotator = UserAgent(software_names=software_names,
+                                   operating_systems=operating_systems,
+                                   limit=100)
+    user_agent = user_agent_rotator.get_random_user_agent()
+
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--window-size-1420,1080')
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument(f'user-agent={user_agent}')
 
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
@@ -133,7 +147,7 @@ def get_facebook_friends_list(facebook_id):
         time.sleep(get_random_number())
         elemnt_name = driver.find_element_by_class_name('_7-1j')
         number_of_friends = re.findall('(\d+)', elemnt_name.text)[0]
-        print(number_of_friends)
+        # print(number_of_friends)
 
         time.sleep(get_random_number())
         elemnt_name.click()
@@ -177,9 +191,21 @@ def create_new_facebook_person(facebook_id, number_of_friends):
     chrome_options = Options()
     # chrome_options.add_argument("--disable-notifications")
 
+    software_names = [SoftwareName.CHROME.value]
+    operating_systems = [OperatingSystem.WINDOWS.value,
+                         OperatingSystem.LINUX.value]
+    user_agent_rotator = UserAgent(software_names=software_names,
+                                   operating_systems=operating_systems,
+                                   limit=100)
+    user_agent = user_agent_rotator.get_random_user_agent()
+
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--window-size-1420,1080')
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument(f'user-agent={user_agent}')
+
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
