@@ -95,7 +95,15 @@ def create_new_vk_person(page_id):
 @app.task()
 def get_facebook_friends_list(facebook_id):
 
-    driver = webdriver.Chrome()
+    chrome_options = Options()
+    # chrome_options.add_argument("--disable-notifications")
+
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+
+
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
     driver.maximize_window()
     driver.get('https://m.facebook.com/')
 
@@ -104,9 +112,9 @@ def get_facebook_friends_list(facebook_id):
     btn = driver.find_element_by_name('login')
 
     time.sleep(get_random_number())
-    login.send_keys('efwiw23rr44t5@yandex.kz')
+    login.send_keys('aktai.t@mail.ru')
     time.sleep(get_random_number())
-    password.send_keys('swudihf2398yr3484t')
+    password.send_keys('banan123')
     time.sleep(get_random_number())
     btn.click()
 
@@ -114,49 +122,57 @@ def get_facebook_friends_list(facebook_id):
     btn1 = driver.find_element_by_class_name('_4g34')
     btn1.click()
     time.sleep(get_random_number())
-    driver.get(f'https://m.facebook.com/profile.php?id={facebook_id}')
+    driver.get(f'https://m.facebook.com/profile.php?id={facebook_id}&sk=friends&__nodl')
     time.sleep(get_random_number())
 
     number_of_friends = 0
     data = []
-    ########### поиск кол друзей ###########
-    time.sleep(get_random_number())
-    elemnt_name = driver.find_element_by_class_name('_7-1j')
-    number_of_friends = re.findall('(\d+)', elemnt_name.text)[0]
-    print(number_of_friends)
-    #####################
-    time.sleep(get_random_number())
-    elemnt_name.click()
-    time.sleep(get_random_number())
 
-    total_friends = dict()
-
-    last_height = driver.execute_script("return document.body.scrollHeight")
-    while True:
-        # Scroll down to bottom
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    try:
+        ########### поиск кол друзей ###########
+        time.sleep(get_random_number())
+        elemnt_name = driver.find_element_by_class_name('_7-1j')
+        number_of_friends = re.findall('(\d+)', elemnt_name.text)[0]
+        print(number_of_friends)
 
         time.sleep(get_random_number())
-        elemnts_name = driver.find_elements_by_class_name('_84l2')
-
-        # Wait to load page
+        elemnt_name.click()
         time.sleep(get_random_number())
-
-        # Calculate new scroll height and compare with last scroll height
-        new_height = driver.execute_script("return document.body.scrollHeight")
-        if new_height == last_height:
-            break
-        last_height = new_height
-    for element in elemnts_name:
-        total_friends[element.text] = element.find_element_by_tag_name("a").get_attribute("href")
-    print(total_friends)
-    time.sleep(24)
+        #####################
+        # time.sleep(get_random_number())
+        # elemnt_name.click()
+        # time.sleep(get_random_number())
+        #
+        # total_friends = dict()
+        #
+        # last_height = driver.execute_script("return document.body.scrollHeight")
+        # while True:
+        #     # Scroll down to bottom
+        #     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        #
+        #     time.sleep(get_random_number())
+        #     elemnts_name = driver.find_elements_by_class_name('_84l2')
+        #
+        #     # Wait to load page
+        #     time.sleep(get_random_number())
+        #
+        #     # Calculate new scroll height and compare with last scroll height
+        #     new_height = driver.execute_script("return document.body.scrollHeight")
+        #     if new_height == last_height:
+        #         breakexcept
+        #     last_height = new_height
+        # for element in elemnts_name:
+        #     total_friends[element.text] = element.find_element_by_tag_name("a").get_attribute("href")
+        # print(total_friends)
+    except:
+        number_of_friends = 0
+        return create_new_facebook_person(facebook_id, number_of_friends)
     driver.close()
-    return number_of_friends
+    return create_new_facebook_person(facebook_id, number_of_friends)
 
 
 @app.task()
-def create_new_facebook_person(facebook_id):
+def create_new_facebook_person(facebook_id, number_of_friends):
 
     chrome_options = Options()
     # chrome_options.add_argument("--disable-notifications")
@@ -174,9 +190,9 @@ def create_new_facebook_person(facebook_id):
     password = driver.find_element_by_name('pass')
     btn = driver.find_element_by_name('login')
 
-    login.send_keys('efwiw23rr44t5@yandex.kz')
+    login.send_keys('aktai.t@mail.ru')
     time.sleep(get_random_number())
-    password.send_keys('swudihf2398yr3484t')
+    password.send_keys('banan123')
     time.sleep(get_random_number())
     btn.click()
 
@@ -238,10 +254,10 @@ def create_new_facebook_person(facebook_id):
 
     new_user = Person.objects.create(
         social_network='Facebook',
-        qty_subscribers=0,
+        qty_subscribers=number_of_friends,
         qty_posts=len(valid_data),
         avg_amount_likes_on_all_posts=avg_amount_likes_on_all_posts,
         avg_amount_likes_on_last_20_posts=avg_amount_likes_on_last_20_posts,
-        subscriptions=0
+        subscriptions=number_of_friends
     )
     return True
