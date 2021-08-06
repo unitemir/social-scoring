@@ -15,6 +15,8 @@ access_token = 'a5dbc417f0806330df079ff23c2ce86f189e510811293df908842d07d0ff2ae7
 
 from selenium import webdriver
 
+from webdriver_manager.chrome import ChromeDriverManager
+
 from selenium.webdriver.chrome.options import Options
 
 import time
@@ -157,9 +159,14 @@ def get_facebook_friends_list(facebook_id):
 def create_new_facebook_person(facebook_id):
 
     chrome_options = Options()
-    chrome_options.add_argument("--disable-notifications")
+    # chrome_options.add_argument("--disable-notifications")
 
-    driver = webdriver.Chrome()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+
     driver.maximize_window()
     driver.get('https://www.facebook.com/')
 
@@ -182,6 +189,9 @@ def create_new_facebook_person(facebook_id):
 
     valid_data = []
     # qty_posts = 0
+
+    avg_amount_likes_on_all_posts = 0
+    avg_amount_likes_on_last_20_posts = 0
 
     while True:
         # Scroll down to bottom
@@ -227,7 +237,7 @@ def create_new_facebook_person(facebook_id):
         pass
 
     new_user = Person.objects.create(
-        social_network='FACEBOOK',
+        social_network='Facebook',
         qty_subscribers=0,
         qty_posts=len(valid_data),
         avg_amount_likes_on_all_posts=avg_amount_likes_on_all_posts,

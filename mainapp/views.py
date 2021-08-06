@@ -22,6 +22,5 @@ class CreateVKPersonAPIView(APIView):
 class CreateFacebookAPIView(APIView):
 
     def post(self, request, facebook_id):
-        # get_facebook_friends_list.delay(facebook_id)
         create_new_facebook_person.delay(facebook_id)
         return HttpResponse('test')
