@@ -126,9 +126,9 @@ def get_facebook_friends_list(facebook_id):
     btn = driver.find_element_by_name('login')
 
     time.sleep(get_random_number())
-    login.send_keys('aktai.t@mail.ru')
+    login.send_keys('87087653537')
     time.sleep(get_random_number())
-    password.send_keys('banan123')
+    password.send_keys('test1234')
     time.sleep(get_random_number())
     btn.click()
 
@@ -216,9 +216,9 @@ def create_new_facebook_person(facebook_id, number_of_friends):
     password = driver.find_element_by_name('pass')
     btn = driver.find_element_by_name('login')
 
-    login.send_keys('aktai.t@mail.ru')
+    login.send_keys('87087653537')
     time.sleep(get_random_number())
-    password.send_keys('banan123')
+    password.send_keys('test1234')
     time.sleep(get_random_number())
     btn.click()
 
