@@ -10,6 +10,8 @@ import json
 import requests
 import re
 
+access_token = '23c80a4e23c80a4e23c80a4ee523b0e924223c823c80a4e42d9073819b94c55e72fc001'
+
 
 from selenium import webdriver
 
@@ -53,36 +55,44 @@ def create_new_instagram_user(insta_username):
 
 @app.task()
 def create_new_vk_person(page_id):
-    chrome_options = Options()
-    # chrome_options.add_argument("--disable-notifications")
-
-    software_names = [SoftwareName.CHROME.value]
-    operating_systems = [OperatingSystem.WINDOWS.value,
-                         OperatingSystem.LINUX.value]
-    user_agent_rotator = UserAgent(software_names=software_names,
-                                   operating_systems=operating_systems,
-                                   limit=100)
-    user_agent = user_agent_rotator.get_random_user_agent()
-
-    chrome_options.add_argument('--headless')
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--disable-dev-shm-usage')
-    chrome_options.add_argument('--window-size-1420,1080')
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument(f'user-agent={user_agent}')
-    chrome_options.add_argument('--disable-blink-features=AutomationControlled')
-
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
-
-    driver.maximize_window()
-    driver.get('https://vk.com/id667055133')
-
-    tmp = driver.current_url
-
-    driver.close()
-    driver.quit()
-
-    return (tmp, user_agent)
+    url = f'https://api.vk.com/method/users.get?user_ids={page_id}&v=5.92&access_token={access_token}'
+    response = requests.get(url).json()
+    user_id = response['response'][0]['id']
+    avg_amount_likes_on_last_20_posts = 0
+    url = f'https://api.vk.com/method/users.getFollowers?user_id={user_id}&count=1000&v=5.92&access_token={access_token}'
+    r = requests.get(url)
+    qty_subscribers = r.json()['response']['count']
+    url = f'https://api.vk.com/method/wall.get?owner_id={user_id}&count=100&v=5.92&access_token={access_token}'
+    r = requests.get(url)
+    qty_posts = r.json()['response']['count']
+    url = f'https://api.vk.com/method/wall.get?owner_id={user_id}&count=100&v=5.92&access_token={access_token}'
+    r = requests.get(url)
+    posts = r.json()
+    likes = []
+    last_20_likes = []
+    for item in posts['response']['items']:
+        likes.append(item['likes']['count'])
+    else:
+        avg_amount_likes_on_all_posts = sum(likes) / posts['response']['count']
+    if posts['response']['count'] >= 20:
+        for item in posts['response']['items'][:20]:
+            last_20_likes.append(item['likes']['count'])
+        else:
+            avg_amount_likes_on_last_20_posts = sum(last_20_likes) / posts['response']['count']
+    if posts['response']['count'] <= 20:
+        pass
+    url = f'https://api.vk.com/method/users.getSubscriptions?user_id={user_id}&count=200&v=5.92&access_token={access_token}'
+    r = requests.get(url)
+    subscriptions = r.json()['response']['users']['count']
+    new_user = Person.objects.create(
+        social_network='VK',
+        qty_subscribers=qty_subscribers,
+        qty_posts=qty_posts,
+        avg_amount_likes_on_all_posts=avg_amount_likes_on_all_posts,
+        avg_amount_likes_on_last_20_posts=avg_amount_likes_on_last_20_posts,
+        subscriptions=subscriptions
+    )
+    return True
 
 
 @app.task()
