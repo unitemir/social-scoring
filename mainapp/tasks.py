@@ -99,7 +99,6 @@ def create_new_vk_person(page_id):
 def get_facebook_friends_list(facebook_id):
 
     chrome_options = Options()
-    # chrome_options.add_argument("--disable-notifications")
 
     software_names = [SoftwareName.CHROME.value]
     operating_systems = [OperatingSystem.WINDOWS.value,
@@ -115,7 +114,7 @@ def get_facebook_friends_list(facebook_id):
     chrome_options.add_argument('--window-size-1420,1080')
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument(f'user-agent={user_agent}')
-
+    chrome_options.add_argument("--disable-notifications")
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
     driver.maximize_window()
@@ -128,11 +127,11 @@ def get_facebook_friends_list(facebook_id):
     time.sleep(get_random_number())
     login.send_keys('87087653537')
     time.sleep(get_random_number())
-    password.send_keys('test1234')
+    password.send_keys('test4321')
     time.sleep(get_random_number())
     btn.click()
 
-    time.sleep(get_random_number() + 2)
+    time.sleep(get_random_number())
     btn1 = driver.find_element_by_class_name('_4g34')
     btn1.click()
     time.sleep(get_random_number())
@@ -182,6 +181,7 @@ def get_facebook_friends_list(facebook_id):
         number_of_friends = 0
         return create_new_facebook_person(facebook_id, number_of_friends)
     driver.close()
+    driver.quit()
     return create_new_facebook_person(facebook_id, number_of_friends)
 
 
@@ -189,7 +189,6 @@ def get_facebook_friends_list(facebook_id):
 def create_new_facebook_person(facebook_id, number_of_friends):
 
     chrome_options = Options()
-    # chrome_options.add_argument("--disable-notifications")
 
     software_names = [SoftwareName.CHROME.value]
     operating_systems = [OperatingSystem.WINDOWS.value,
@@ -205,7 +204,7 @@ def create_new_facebook_person(facebook_id, number_of_friends):
     chrome_options.add_argument('--window-size-1420,1080')
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument(f'user-agent={user_agent}')
-
+    chrome_options.add_argument("--disable-notifications")
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
@@ -218,7 +217,7 @@ def create_new_facebook_person(facebook_id, number_of_friends):
 
     login.send_keys('87087653537')
     time.sleep(get_random_number())
-    password.send_keys('test1234')
+    password.send_keys('test4321')
     time.sleep(get_random_number())
     btn.click()
 
@@ -226,20 +225,15 @@ def create_new_facebook_person(facebook_id, number_of_friends):
     driver.get(f'https://m.facebook.com/profile.php?id={facebook_id}')
     time.sleep(get_random_number())
 
-    # Get scroll height
     last_height = driver.execute_script("return document.body.scrollHeight")
 
     valid_data = []
-    # qty_posts = 0
 
     avg_amount_likes_on_all_posts = 0
     avg_amount_likes_on_last_20_posts = 0
 
     while True:
-        # Scroll down to bottom
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
-        # Wait to load page
         time.sleep(get_random_number())
         likes_class = driver.find_elements_by_class_name('_1g06')
         for i in likes_class:
@@ -257,7 +251,6 @@ def create_new_facebook_person(facebook_id, number_of_friends):
         #     print(article)
         #     qty_posts += 1
 
-        # Calculate new scroll height and compare with last scroll height
         new_height = driver.execute_script("return document.body.scrollHeight")
 
         if new_height == last_height:
@@ -266,24 +259,21 @@ def create_new_facebook_person(facebook_id, number_of_friends):
 
     try:
         avg_amount_likes_on_all_posts = sum(valid_data) / len(valid_data)
-        # print(avg_amount_likes_on_all_posts)
-
         if len(valid_data) >= 20:
             avg_amount_likes_on_last_20_posts = sum(valid_data[:20]) / 20
-            # print(avg_amount_likes_on_last_20_posts)
         if len(valid_data) <= 20:
             avg_amount_likes_on_last_20_posts = avg_amount_likes_on_all_posts
-            # print(avg_amount_likes_on_all_posts)
-        # print(len(valid_data))
     except:
         pass
 
     new_user = Person.objects.create(
         social_network='Facebook',
-        qty_subscribers=number_of_friends,
+        qty_subscribers=0,
         qty_posts=len(valid_data),
         avg_amount_likes_on_all_posts=avg_amount_likes_on_all_posts,
         avg_amount_likes_on_last_20_posts=avg_amount_likes_on_last_20_posts,
-        subscriptions=number_of_friends
+        subscriptions=0
     )
+    driver.close()
+    driver.quit()
     return True
