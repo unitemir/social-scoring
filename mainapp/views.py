@@ -6,8 +6,6 @@ from .tasks import create_new_instagram_user, create_new_vk_person, get_facebook
 from rest_framework.response import Response
 
 import requests
-from django.shortcuts import render
-from .models import Person
 
 
 class CreateInstagramAPIView(APIView):
@@ -61,26 +59,21 @@ class GetVKScoreAPIView(APIView):
             except:
                 continue
 
-        print(data)
+        vertices = [scammer]
 
-        for scammer_friend, scammer_friend_friends_list in data.items():
-            print(scammer_friend_friends_list)
+        for scammer_friend, scammer_friend_sub_friends in data.items():
+            vertices.append(scammer_friend)
+            for sub_friend in scammer_friend_sub_friends:
+                if sub_friend == scammer:
+                    continue
+                vertices.append(sub_friend)
 
-        # vertices = [scammer]
-        #
-        # for scammer_friend, scammer_friend_sub_friends in data.items():
-        #     vertices.append(scammer_friend)
-        #     for sub_friend in scammer_friend_sub_friends:
-        #         if sub_friend == scammer:
-        #             continue
-        #         vertices.append(sub_friend)
-        #
-        # graph = {person: list() for person in vertices}
-        #
-        # for friend, sub_friends in data.items():
-        #     for sub_friend in sub_friends:
-        #         graph[friend].append(sub_friend)
-        #         graph[sub_friend].append(friend)
+        graph = {person: list() for person in vertices}
+
+        for friend, sub_friends in data.items():
+            for sub_friend in sub_friends:
+                graph[friend].append(sub_friend)
+                graph[sub_friend].append(friend)
 
         # print(graph)
 
@@ -113,18 +106,22 @@ class GetVKScoreAPIView(APIView):
         #         print(heigh_v, 'heigh')
         #         queue.append(heigh_v)
 
-        # start_vertex = scammer
-        # queue = deque([start_vertex])
-        # x = 0
-        # while x < len(vertices):
-        #     cur_v = queue.popleft()
-        #     print(cur_v, 'cur_v')
-        #     print(x)
-        #
-        #     for heigh_v in graph[cur_v]:
-        #         print(heigh_v, 'heigh_v')
-        #         queue.append(heigh_v)
-        #     else:
-        #         x += 1
+        start_vertex = scammer
+        queue = deque([start_vertex])
+        x = 0
+        while x < len(vertices):
+            cur_v = queue.popleft()
+            print(cur_v, 'cur_v')
+            print(x)
+
+            for heigh_v in graph[cur_v]:
+                print(heigh_v, 'heigh_v')
+                queue.append(heigh_v)
+            else:
+                x += 1
 
         return Response({'status': 'success'})
+
+
+def show_persons_three(request):
+    return render(request, "persons_three.html", {'persons': Person.objects.all()})
