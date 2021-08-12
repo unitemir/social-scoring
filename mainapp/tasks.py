@@ -1,34 +1,21 @@
-from __future__ import absolute_import, unicode_literals
 from conf.celery import app
 from .main import ChildBot
 from .models import Person
+from .utils import get_random_number
 
 import os
+import re
+import time
+import requests
+import json
 import glob
 
-import json
-import requests
-import re
-
-access_token = '23c80a4e23c80a4e23c80a4ee523b0e924223c823c80a4e42d9073819b94c55e72fc001'
-
-
 from selenium import webdriver
-
 from webdriver_manager.chrome import ChromeDriverManager
-
 from selenium.webdriver.chrome.options import Options
-
-import time
-
-from random import randint, random
 
 from random_user_agent.user_agent import UserAgent
 from random_user_agent.params import SoftwareName, OperatingSystem
-
-
-def get_random_number():
-    return randint(4, 15) * random()
 
 
 @app.task()
@@ -55,6 +42,7 @@ def create_new_instagram_user(insta_username):
 
 @app.task()
 def create_new_vk_person(page_id):
+    access_token = '23c80a4e23c80a4e23c80a4ee523b0e924223c823c80a4e42d9073819b94c55e72fc001'
     url = f'https://api.vk.com/method/users.get?user_ids={page_id}&v=5.92&access_token={access_token}'
     response = requests.get(url).json()
     user_id = response['response'][0]['id']
@@ -244,12 +232,6 @@ def create_new_facebook_person(facebook_id, number_of_friends):
                 pass
 
         time.sleep(get_random_number())
-        # class_feed = driver.find_element_by_class_name('feed')
-        # section_class = class_feed.find_element_by_tag_name('section')
-        # articles = section_class.find_elements_by_tag_name('article')
-        # for article in articles:
-        #     print(article)
-        #     qty_posts += 1
 
         new_height = driver.execute_script("return document.body.scrollHeight")
 
@@ -268,11 +250,13 @@ def create_new_facebook_person(facebook_id, number_of_friends):
 
     new_user = Person.objects.create(
         social_network='Facebook',
-        qty_subscribers=0,
+        username=facebook_id,
+        score=0,
+        qty_subscribers=number_of_friends,
         qty_posts=len(valid_data),
         avg_amount_likes_on_all_posts=avg_amount_likes_on_all_posts,
         avg_amount_likes_on_last_20_posts=avg_amount_likes_on_last_20_posts,
-        subscriptions=0
+        subscriptions=number_of_friends
     )
     driver.close()
     driver.quit()

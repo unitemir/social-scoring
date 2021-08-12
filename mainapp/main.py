@@ -1,10 +1,13 @@
 import os
 import glob
+
+from instabot import Bot
+
+import requests
+
 cookie_del = glob.glob("config/*cookie.json")
 if cookie_del:
     os.remove(cookie_del[0])
-from instabot import Bot
-import requests
 
 
 class ChildBot:
