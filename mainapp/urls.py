@@ -4,5 +4,5 @@ from .views import *
 
 
 urlpatterns = [
-    path('get-stats/<str:social_network>/<str:username>/')
+    path('get-stats/<str:social_network>/<str:username>/', GetSocialNetworksStatsView.as_view())
 ]

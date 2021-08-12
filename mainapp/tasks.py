@@ -1,3 +1,4 @@
+from __future__ import absolute_import, unicode_literals
 from conf.celery import app
 from .main import ChildBot
 from .models import Person
@@ -26,17 +27,21 @@ def create_new_instagram_user(insta_username):
     avr_likers = user.get_avr_likers(insta_username)
     avr_20_likers = user.get_20_avr_likers(insta_username)
     follwoing_len = user.get_follwoing_len(insta_username)
+
     new_user = Person.objects.create(
-        social_network='Instagram',
+        full_name='test',
+        score=0,
         qty_subscribers=followers_len,
+        subscriptions=follwoing_len,
         qty_posts=total_len_posts,
         avg_amount_likes_on_all_posts=avr_likers,
-        avg_amount_likes_on_last_20_posts=avr_20_likers,
-        subscriptions=follwoing_len
+        avg_amount_likes_on_last_20_posts=avr_20_likers
     )
+
     cookie_del = glob.glob("config/*cookie.json")
     if cookie_del:
         os.remove(cookie_del[0])
+
     return True
 
 
