@@ -29,7 +29,7 @@ def create_new_instagram_user(insta_username):
     follwoing_len = user.get_follwoing_len(insta_username)
 
     new_user = Person.objects.create(
-        full_name='test',
+        full_name='Instagram',
         score=0,
         qty_subscribers=followers_len,
         subscriptions=follwoing_len,
@@ -78,7 +78,7 @@ def create_new_vk_person(page_id):
     r = requests.get(url)
     subscriptions = r.json()['response']['users']['count']
     new_user = Person.objects.create(
-        full_name='test',
+        full_name='VK',
         score=0,
         qty_subscribers=qty_subscribers,
         subscriptions=subscriptions,
@@ -101,7 +101,6 @@ def get_friends(facebook_id):
                                    limit=100)
     user_agent = user_agent_rotator.get_random_user_agent()
 
-
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
@@ -109,6 +108,7 @@ def get_friends(facebook_id):
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument(f'user-agent={user_agent}')
     chrome_options.add_argument("--disable-javascript")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
@@ -130,7 +130,7 @@ def get_friends(facebook_id):
     btn1 = driver.find_element_by_class_name('_4g34')
     btn1.click()
     time.sleep(get_random_number())
-    driver.get(face_book_id)
+    driver.get(f'https://m.facebook.com/profile.php?id={facebook_id}')
     time.sleep(get_random_number())
     number_of_friends = 0
 
@@ -158,8 +158,11 @@ def get_friends(facebook_id):
         for element in elemnts_name:
             total_friends[element.text] = element.find_element_by_tag_name("a").get_attribute("href")
         driver.close()
-        return total_friends
-    return elemnts_name
+        driver.quit()
+        return create_new_facebook_person.delay(facebook_id, len(total_friends))
+    driver.close()
+    driver.quit()
+    return create_new_facebook_person.delay(facebook_id, 0)
 
 
 @app.task()
@@ -182,6 +185,7 @@ def create_new_facebook_person(facebook_id, number_of_friends):
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument(f'user-agent={user_agent}')
     chrome_options.add_argument("--disable-notifications")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
@@ -238,7 +242,7 @@ def create_new_facebook_person(facebook_id, number_of_friends):
         pass
 
     new_user = Person.objects.create(
-        full_name='test',
+        full_name='facebook',
         score=0,
         qty_subscribers=number_of_friends,
         subscriptions=number_of_friends,
