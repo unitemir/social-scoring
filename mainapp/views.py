@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 
 from django.http import HttpResponse
 
-from .tasks import create_new_instagram_user, create_new_vk_person, get_facebook_friends_list, create_new_facebook_person
+from .tasks import *
 from rest_framework.response import Response
 
 import requests
