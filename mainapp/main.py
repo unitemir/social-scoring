@@ -10,7 +10,7 @@ if cookie_del:
     os.remove(cookie_del[0])
 
 
-class ChildBot:
+class InstagramStats:
     def __init__(self, username, password):
         self.bot = Bot()
         self.bot.login(username=username, password=password)

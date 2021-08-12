@@ -1,6 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 from conf.celery import app
-from .main import ChildBot
+from .main import InstagramStats
 from .models import Person
 from .utils import get_random_number
 
@@ -21,7 +21,7 @@ from random_user_agent.params import SoftwareName, OperatingSystem
 
 @app.task()
 def create_new_instagram_user(insta_username):
-    user = ChildBot(username="tewovam682", password="Admin1234")
+    user = InstagramStats(username="tewovam682", password="Admin1234")
     followers_len = user.get_followers_len(insta_username)
     total_len_posts = user.get_total_len_posts(insta_username)
     avr_likers = user.get_avr_likers(insta_username)
