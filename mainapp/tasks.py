@@ -11,7 +11,9 @@ import requests
 import json
 import glob
 
-from selenium import webdriver
+from random import choice
+
+from seleniumwire import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 
@@ -88,32 +90,53 @@ def create_new_vk_person(page_id):
 
 @app.task()
 def get_friends(facebook_id):
-    chrome_options = Options()
+
+    user_agents = [
+        'Mozilla/5.0 (Linux Android 10 M2006C3MG) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux Android 7.1.2 Redmi Note 5A Prime Build/N2G47H wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.87 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux Android 7.0 SAMSUNG SM-G928F/G928FXXS5CRH1) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.0 Chrome/87.0.4280.141 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux Android 10 RMX2020 Build/QP1A.190711.020 wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.96 Mobile Safari/537.36',
+    ]
+
+    proxies = [
+        '212.60.22.150:65233',
+        '185.180.109.249:65233',
+        '193.233.80.131:65233',
+        '194.116.162.155:65233'
+    ]
+
+    cookies_files = ['/code/mainapp/cookies_jsons/cookie2.json', '/code/mainapp/cookies_jsons/cookietest.json']
+
+    chrome_options = webdriver.ChromeOptions()
 
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.add_argument('--window-size-1420,1080')
     chrome_options.add_argument('--disable-gpu')
-    # chrome_options.add_argument(f'user-agent={}')
+    chrome_options.add_argument(f'user-agent={choice(user_agents)}')
     chrome_options.add_argument("--disable-javascript")
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
 
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+    proxy_options = {
+        'proxy': {
+            'https': f'https://3010egh:J9g8TdC@{choice(proxies)}',
+        }
+    }
+
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options, seleniumwire_options=proxy_options)
 
     driver.maximize_window()
     driver.get('https://m.facebook.com/')
 
-    login = driver.find_element_by_name('email')
-    password = driver.find_element_by_name('pass')
-    btn = driver.find_element_by_name('login')
+    with open(f'{choice(cookies_files)}', 'r', newline='') as inputdata:
+        cookies = json.load(inputdata)
+        for cookie in cookies:
+            driver.add_cookie(cookie)
 
     time.sleep(get_random_number())
-    login.send_keys('87087653537')
+    driver.refresh()
     time.sleep(get_random_number())
-    password.send_keys('test4321')
-    time.sleep(get_random_number())
-    btn.click()
 
     time.sleep(get_random_number())
     btn1 = driver.find_element_by_class_name('_4g34')
@@ -156,32 +179,53 @@ def get_friends(facebook_id):
 
 @app.task()
 def create_new_facebook_person(facebook_id, number_of_friends):
+    user_agents = [
+        'Mozilla/5.0 (Linux Android 10 M2006C3MG) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux Android 7.1.2 Redmi Note 5A Prime Build/N2G47H wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.87 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux Android 7.0 SAMSUNG SM-G928F/G928FXXS5CRH1) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.0 Chrome/87.0.4280.141 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux Android 10 RMX2020 Build/QP1A.190711.020 wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.96 Mobile Safari/537.36',
+    ]
 
-    chrome_options = Options()
+    proxies = [
+        '212.60.22.150:65233',
+        '185.180.109.249:65233',
+        '193.233.80.131:65233',
+        '194.116.162.155:65233'
+    ]
+
+    cookies_files = ['/code/mainapp/cookies_jsons/cookie2.json', '/code/mainapp/cookies_jsons/cookietest.json']
+
+    chrome_options = webdriver.ChromeOptions()
 
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.add_argument('--window-size-1420,1080')
     chrome_options.add_argument('--disable-gpu')
-    # chrome_options.add_argument(f'user-agent={}')
-    chrome_options.add_argument("--disable-notifications")
+    chrome_options.add_argument(f'user-agent={choice(user_agents)}')
+    chrome_options.add_argument("--disable-javascript")
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
 
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+    proxy_options = {
+        'proxy': {
+            'https': f'https://3010egh:J9g8TdC@{choice(proxies)}',
+        }
+    }
+
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options,
+                              seleniumwire_options=proxy_options)
 
     driver.maximize_window()
-    driver.get('https://www.facebook.com/')
+    driver.get('https://m.facebook.com/')
 
-    login = driver.find_element_by_name('email')
-    password = driver.find_element_by_name('pass')
-    btn = driver.find_element_by_name('login')
+    with open(f'{choice(cookies_files)}', 'r', newline='') as inputdata:
+        cookies = json.load(inputdata)
+        for cookie in cookies:
+            driver.add_cookie(cookie)
 
-    login.send_keys('87087653537')
     time.sleep(get_random_number())
-    password.send_keys('test4321')
+    driver.refresh()
     time.sleep(get_random_number())
-    btn.click()
 
     time.sleep(get_random_number())
     driver.get(f'https://m.facebook.com/profile.php?id={facebook_id}')
