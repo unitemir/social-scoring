@@ -1,4 +1,0 @@
-inst:
-    username: tewovam682
-    password: Admin1234
-
