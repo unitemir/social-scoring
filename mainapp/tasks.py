@@ -19,13 +19,13 @@ from selenium.webdriver.chrome.options import Options
 
 
 @app.task()
-def create_new_instagram_user(insta_username):
+def get_instagram_person_stats_by_instagram_username(instagram_username):
     user = InstagramStats(username="tewovam682", password="Admin1234")
-    followers_len = user.get_followers_len(insta_username)
-    total_len_posts = user.get_total_len_posts(insta_username)
-    avr_likers = user.get_avr_likers(insta_username)
-    avr_20_likers = user.get_20_avr_likers(insta_username)
-    follwoing_len = user.get_follwoing_len(insta_username)
+    followers_len = user.get_followers_len(instagram_username)
+    total_len_posts = user.get_total_len_posts(instagram_username)
+    avr_likers = user.get_avr_likers(instagram_username)
+    avr_20_likers = user.get_20_avr_likers(instagram_username)
+    follwoing_len = user.get_follwoing_len(instagram_username)
 
     new_user = Person.objects.create(
         full_name='Instagram',
@@ -45,7 +45,7 @@ def create_new_instagram_user(insta_username):
 
 
 @app.task()
-def create_new_vk_person(page_id):
+def get_vk_person_stats_by_page_id(page_id):
     access_token = '23c80a4e23c80a4e23c80a4ee523b0e924223c823c80a4e42d9073819b94c55e72fc001'
     url = f'https://api.vk.com/method/users.get?user_ids={page_id}&v=5.92&access_token={access_token}'
     response = requests.get(url).json()
@@ -89,7 +89,7 @@ def create_new_vk_person(page_id):
 
 
 @app.task()
-def get_friend_list(facebook_id):
+def get_facebook_person_friend_list(facebook_id):
 
     user_agents = [
         'Mozilla/5.0 (Linux Android 10 M2006C3MG) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36',
@@ -174,7 +174,7 @@ def get_friend_list(facebook_id):
 
 
 @app.task()
-def create_new_facebook_person(facebook_id, number_of_friends):
+def get_facebook_person_stats_by_facebook_id(facebook_id, number_of_friends):
     user_agents = [
         'Mozilla/5.0 (Linux Android 10 M2006C3MG) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36',
         'Mozilla/5.0 (Linux Android 7.1.2 Redmi Note 5A Prime Build/N2G47H wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.87 Mobile Safari/537.36',
