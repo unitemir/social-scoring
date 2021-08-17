@@ -11,7 +11,7 @@ class GetSocialNetworksStatsView(APIView):
             create_new_instagram_user.delay(username)
             return Response({'response': 'Instagram task has been running'})
         if social_network == 'Facebook':
-            get_friends.delay(username)
+            get_friend_list.delay(username)
             return Response({'response': 'Facebook task has been running'})
         if social_network == 'VK':
             create_new_vk_person.delay(username)

@@ -89,7 +89,7 @@ def create_new_vk_person(page_id):
 
 
 @app.task()
-def get_friends(facebook_id):
+def get_friend_list(facebook_id):
 
     user_agents = [
         'Mozilla/5.0 (Linux Android 10 M2006C3MG) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36',
@@ -105,7 +105,7 @@ def get_friends(facebook_id):
         '194.116.162.155:65233'
     ]
 
-    cookies_files = ['/code/mainapp/cookies_jsons/cookie2.json', '/code/mainapp/cookies_jsons/cookietest.json']
+    cookies_files = ['/code/mainapp/cookies_jsons/cookie2.json']
 
     chrome_options = webdriver.ChromeOptions()
 
@@ -138,43 +138,39 @@ def get_friends(facebook_id):
     driver.refresh()
     time.sleep(get_random_number())
 
-    time.sleep(get_random_number())
-    btn1 = driver.find_element_by_class_name('_4g34')
-    btn1.click()
-    time.sleep(get_random_number())
     driver.get(f'https://m.facebook.com/profile.php?id={facebook_id}')
-    time.sleep(get_random_number())
-    number_of_friends = 0
-
-    time.sleep(get_random_number())
 
     try:
-        elemnt_name = driver.find_element_by_class_name('_7-1j')
-        time.sleep(get_random_number())
         total_friends = dict()
-        elemnt_name.click()
         time.sleep(get_random_number())
+        elements_name = driver.find_element_by_class_name('_7-1j')
+        number_of_friends = int(''.join(elements_name.text.split()[1:]))
+        if number_of_friends > 1000:
+            return number_of_friends
+
+        elements_name.click()
+        time.sleep(get_random_number())
+
         last_height = driver.execute_script("return document.body.scrollHeight")
         while True:
+            time.sleep(get_random_number())
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             time.sleep(get_random_number())
-            elemnts_name = driver.find_elements_by_class_name('_84l2')
+            elements_name = driver.find_elements_by_class_name('_84l2')
+            for element in elements_name:
+                total_friends[element.text] = element.find_element_by_tag_name("a").get_attribute("href")
             time.sleep(get_random_number())
             new_height = driver.execute_script("return document.body.scrollHeight")
             if new_height == last_height:
                 break
             last_height = new_height
+        # print(len(total_friends))
+        return total_friends
     except:
-        elemnts_name = []
-    if elemnts_name:
-        for element in elemnts_name:
-            total_friends[element.text] = element.find_element_by_tag_name("a").get_attribute("href")
+        return 0
+    finally:
         driver.close()
         driver.quit()
-        return create_new_facebook_person.delay(facebook_id, len(total_friends))
-    driver.close()
-    driver.quit()
-    return create_new_facebook_person.delay(facebook_id, 0)
 
 
 @app.task()
