@@ -15,3 +15,4 @@ RUN pip install -r requirements.txt
 RUN pip install webdriver-manager
 RUN pip install random_user_agent
 RUN pip install selenium-wire
+RUN pip install beautifulsoup4
