@@ -123,34 +123,6 @@ def get_instagram_friend_list_by_instagram_username(instagram_username):
     return True
 
 
-# @app.task()
-# def get_instagram_friend_list_by_instagram_username(instagram_username):
-#
-#
-#     def get_friends_list_by_intagram_username(inst_username):
-#         accounts = [('fobia9589', 'a0baLG'), ('amabs319', 'EvzWUY')]
-#         acc = accounts[1]
-#         user = InstagramStats(username=f"{acc[0]}", password=f"{acc[1]}")
-#         subscriptions = user.get_follwoing(instagram_username)
-#         return subscriptions
-#
-#
-#     for friend in get_friends_list_by_intagram_username(instagram_username):
-#         try:
-#             print(friend, 'root person friend')
-#             print(get_friends_list_by_intagram_username(friend))
-#             print()
-#         except:
-#             continue
-#         for friend_lvl_2 in get_friends_list_by_intagram_username(friend):
-#             try:
-#                 print(friend_lvl_2, 'friend lvl 2')
-#                 print(get_friends_list_by_intagram_username(friend_lvl_2))
-#                 print()
-#             except:
-#                 continue
-
-
 @app.task()
 def get_instagram_person_stats_by_instagram_username(instagram_username):
     user = InstagramStats(username="", password="")
