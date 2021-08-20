@@ -107,9 +107,11 @@ def get_instagram_friend_list_by_instagram_username(instagram_username):
         except:
             pass
         time.sleep(3)
-        for element in soup.find_all(class_="FPmhX"):
-            link = element.get('href')
-            friends.add(link)
+        for elem in soup.find_all(class_='PZuss'):
+            for el in elem.find_all('li'):
+                for e in el.find_all('a'):
+                    friends.add(e.get('href'))
+        friends = set(friends)
 
         driver.close()
         driver.quit()
