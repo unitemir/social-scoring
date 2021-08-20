@@ -17,6 +17,7 @@ from datetime import datetime
 from random import choice
 
 from .scrap.scrap_inst import Instagram
+from .scrap.scrap_fb import Facebook
 
 
 @app.task()
@@ -141,87 +142,12 @@ def get_vk_person_stats_by_page_id(page_id):
 
 @app.task()
 def get_facebook_person_friend_list(facebook_id):
-
-    user_agents = [
-        'Mozilla/5.0 (Linux Android 10 M2006C3MG) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36',
-        'Mozilla/5.0 (Linux Android 7.1.2 Redmi Note 5A Prime Build/N2G47H wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.87 Mobile Safari/537.36',
-        'Mozilla/5.0 (Linux Android 7.0 SAMSUNG SM-G928F/G928FXXS5CRH1) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.0 Chrome/87.0.4280.141 Mobile Safari/537.36',
-        'Mozilla/5.0 (Linux Android 10 RMX2020 Build/QP1A.190711.020 wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.96 Mobile Safari/537.36',
-    ]
-
-    proxies = [
-        '212.60.22.150:65233',
-        '185.180.109.249:65233',
-        '193.233.80.131:65233',
-        '194.116.162.155:65233'
-    ]
-
-    cookies_files = ['/code/mainapp/cookies_jsons/cookie2.json']
-
-    chrome_options = webdriver.ChromeOptions()
-
-    chrome_options.add_argument('--headless')
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--disable-dev-shm-usage')
-    chrome_options.add_argument('--window-size-1420,1080')
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument(f'user-agent={choice(user_agents)}')
-    chrome_options.add_argument("--disable-javascript")
-    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-
-    proxy_options = {
-        'proxy': {
-            'https': f'https://3010egh:J9g8TdC@{choice(proxies)}',
-        }
-    }
-
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options, seleniumwire_options=proxy_options)
-
-    driver.maximize_window()
-    driver.get('https://m.facebook.com/')
-
-    with open(f'{choice(cookies_files)}', 'r', newline='') as inputdata:
-        cookies = json.load(inputdata)
-        for cookie in cookies:
-            driver.add_cookie(cookie)
-
-    time.sleep(get_random_number())
-    driver.refresh()
-    time.sleep(get_random_number())
-
-    driver.get(f'https://m.facebook.com/profile.php?id={facebook_id}')
-
-    try:
-        total_friends = dict()
-        time.sleep(get_random_number())
-        elements_name = driver.find_element_by_class_name('_7-1j')
-        number_of_friends = int(''.join(elements_name.text.split()[1:]))
-        if number_of_friends > 1000:
-            return number_of_friends
-
-        elements_name.click()
-        time.sleep(get_random_number())
-
-        last_height = driver.execute_script("return document.body.scrollHeight")
-        while True:
-            time.sleep(get_random_number())
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            time.sleep(get_random_number())
-            elements_name = driver.find_elements_by_class_name('_84l2')
-            for element in elements_name:
-                total_friends[element.text] = element.find_element_by_tag_name("a").get_attribute("href")
-            time.sleep(get_random_number())
-            new_height = driver.execute_script("return document.body.scrollHeight")
-            if new_height == last_height:
-                break
-            last_height = new_height
-        # print(len(total_friends))
-        return total_friends
-    except:
-        return 0
-    finally:
-        driver.close()
-        driver.quit()
+    fb = Facebook()
+    fb.auth()
+    friends = fb.get_friends_list_by_face_book_id(facebook_id)
+    print(friends)
+    print(len(friends))
+    return True
 
 
 @app.task()
