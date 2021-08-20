@@ -9,145 +9,53 @@ import re
 import time
 import requests
 import json
-import glob
+# import glob
 import random
 
 from datetime import datetime
 
 from random import choice
 
-from seleniumwire import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
-
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
-from bs4 import BeautifulSoup as bs
-
-from random_user_agent.user_agent import UserAgent
-from random_user_agent.params import SoftwareName, OperatingSystem
+from .scrap.scrap_inst import Instagram
 
 
 @app.task()
 def get_instagram_friend_list_by_instagram_username(instagram_username):
 
-    def get_friends_list_by_instagram_username(instagram_username):
-        proxies = [
-            '212.60.22.150:65233',
-            '185.180.109.249:65233',
-            '193.233.80.131:65233',
-            '194.116.162.155:65233'
-        ]
+    inst = Instagram('selen_test8237', 'testselen1234')
+    inst.auth()
+    res = inst.get_friends_list_by_instagram_username(instagram_username)
 
-        software_names = [SoftwareName.CHROME.value]
-        operating_systems = [OperatingSystem.WINDOWS.value,
-                             OperatingSystem.LINUX.value]
-        user_agent_rotator = UserAgent(software_names=software_names,
-                                       operating_systems=operating_systems,
-                                       limit=100)
-        user_agent = user_agent_rotator.get_random_user_agent()
-
-        chrome_options = webdriver.ChromeOptions()
-
-        chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--disable-dev-shm-usage')
-        chrome_options.add_argument('--window-size-1420,1080')
-        chrome_options.add_argument('--disable-gpu')
-        chrome_options.add_argument(f'user-agent={user_agent}')
-        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-
-        proxy_options = {
-            'proxy': {
-                'https': f'https://3010egh:J9g8TdC@{choice(proxies)}',
-            }
-        }
-
-        driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options,
-                                  seleniumwire_options=proxy_options)
-        driver.get('https://www.instagram.com/')
-
-        with open('/code/mainapp/cookies_jsons/cookie_inst.json', 'r', newline='') as inputdata:
-            cookies = json.load(inputdata)
-            for cookie in cookies:
-                driver.add_cookie(cookie)
-
-        time.sleep(get_random_number())
-        driver.refresh()
-        time.sleep(get_random_number())
-
-        driver.implicitly_wait(60)
-        driver.get(f'https://www.instagram.com/{instagram_username}/')
-
-        followers = driver.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[3]')
-        followers.click()
-
-        friends = set()
-        try:
-            driver.find_element_by_class_name('PZuss')
-            pop_up_window = WebDriverWait(
-                driver, 2).until(EC.element_to_be_clickable((By.XPATH, "//div[@class='isgrP']")))
-            i = 1
-            fr = list()
-            while True:
-                driver.execute_script(
-                    'arguments[0].scrollTop = arguments[0].scrollTop + arguments[0].offsetHeight;',
-                    pop_up_window)
-                soup = bs(driver.page_source, 'html.parser')
-                fr.append(len(soup.find_all('li', {"class": "wo9IH"})))
-                if i % 10 == 0:
-                    if len(set(fr)) == 1:
-                        break
-                    fr = []
-                i += 1
-                time.sleep(3)
-        except:
-            pass
-        time.sleep(3)
-        for elem in soup.find_all(class_='PZuss'):
-            for el in elem.find_all('li'):
-                for e in el.find_all('a'):
-                    friends.add(e.get('href'))
-        friends = set(friends)
-
-        driver.close()
-        driver.quit()
-        return del_slashes(friends)
-
-    res = get_friends_list_by_instagram_username(instagram_username)
     print(res)
     print(len(res))
-
+    inst.close_browser()
     return True
 
 
-@app.task()
-def get_instagram_person_stats_by_instagram_username(instagram_username):
-    user = InstagramStats(username="", password="")
-    followers_len = user.get_followers_len(instagram_username)
-    total_len_posts = user.get_total_len_posts(instagram_username)
-    avr_likers = user.get_avr_likers(instagram_username)
-    avr_20_likers = user.get_20_avr_likers(instagram_username)
-    follwoing_len = user.get_follwoing_len(instagram_username)
-
-    new_user = Person.objects.create(
-        full_name='Instagram',
-        score=0,
-        qty_subscribers=followers_len,
-        subscriptions=follwoing_len,
-        qty_posts=total_len_posts,
-        avg_amount_likes_on_all_posts=avr_likers,
-        avg_amount_likes_on_last_20_posts=avr_20_likers
-    )
-
-    cookie_del = glob.glob("config/*cookie.json")
-    if cookie_del:
-        os.remove(cookie_del[0])
-
-    return True
+# @app.task()
+# def get_instagram_person_stats_by_instagram_username(instagram_username):
+#     user = InstagramStats(username="", password="")
+#     followers_len = user.get_followers_len(instagram_username)
+#     total_len_posts = user.get_total_len_posts(instagram_username)
+#     avr_likers = user.get_avr_likers(instagram_username)
+#     avr_20_likers = user.get_20_avr_likers(instagram_username)
+#     follwoing_len = user.get_follwoing_len(instagram_username)
+#
+#     new_user = Person.objects.create(
+#         full_name='Instagram',
+#         score=0,
+#         qty_subscribers=followers_len,
+#         subscriptions=follwoing_len,
+#         qty_posts=total_len_posts,
+#         avg_amount_likes_on_all_posts=avr_likers,
+#         avg_amount_likes_on_last_20_posts=avr_20_likers
+#     )
+#
+#     cookie_del = glob.glob("config/*cookie.json")
+#     if cookie_del:
+#         os.remove(cookie_del[0])
+#
+#     return True
 
 
 @app.task()
