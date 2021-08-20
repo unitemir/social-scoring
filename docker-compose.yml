@@ -5,7 +5,7 @@ services:
     working_dir: /code
     volumes:
       - .:/code
-    command: bash -c "python manage.py runserver 0.0.0.0:8000 --nothreading --noreload"
+    command: bash -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000 --nothreading --noreload"
     ports:
       - "8000:8000"
   rabbitmq:
