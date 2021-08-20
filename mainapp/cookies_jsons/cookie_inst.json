@@ -1,7 +1,7 @@
 [
 {
     "domain": ".instagram.com",
-    "expirationDate": 1660807039.221896,
+    "expirationDate": 1660887744.572941,
     "hostOnly": false,
     "httpOnly": false,
     "name": "csrftoken",
@@ -9,12 +9,25 @@
     "secure": true,
     "session": false,
     "storeId": "0",
-    "value": "dvOfiIobXxGGP5R877VLHYuw0drij7FU",
+    "value": "yMrpWimPxmM5isFvSMjD8I8uwIRgBf9T",
     "id": 1
 },
 {
     "domain": ".instagram.com",
-    "expirationDate": 1637133439.222044,
+    "expirationDate": 1692446410.377389,
+    "hostOnly": false,
+    "httpOnly": true,
+    "name": "datr",
+    "path": "/",
+    "secure": true,
+    "session": false,
+    "storeId": "0",
+    "value": "yEceYQU3R-KRe-XrFsox4jJC",
+    "id": 2
+},
+{
+    "domain": ".instagram.com",
+    "expirationDate": 1637214144.573134,
     "hostOnly": false,
     "httpOnly": false,
     "name": "ds_user_id",
@@ -23,7 +36,7 @@
     "session": false,
     "storeId": "0",
     "value": "49266232086",
-    "id": 2
+    "id": 3
 },
 {
     "domain": ".instagram.com",
@@ -36,7 +49,7 @@
     "session": false,
     "storeId": "0",
     "value": "3C19821B-E5C5-4CC8-8C3A-1D096F0DFF19",
-    "id": 3
+    "id": 4
 },
 {
     "domain": ".instagram.com",
@@ -49,7 +62,7 @@
     "session": false,
     "storeId": "0",
     "value": "1",
-    "id": 4
+    "id": 5
 },
 {
     "domain": ".instagram.com",
@@ -62,7 +75,7 @@
     "session": false,
     "storeId": "0",
     "value": "YQzDYgAEAAFBZKYgUa_88wEkzfht",
-    "id": 5
+    "id": 6
 },
 {
     "domain": ".instagram.com",
@@ -73,12 +86,12 @@
     "secure": true,
     "session": true,
     "storeId": "0",
-    "value": "\"ODN\\05449266232086\\0541660893439:01f73148a1ae299b992733c926686b171370c815308fdd12f06f6e2f7a48380304b01428\"",
-    "id": 6
+    "value": "\"ODN\\05449266232086\\0541660974144:01f79e12622b036e464d4f6fa31197dd93f13e2d4a057c674b6b3cce2e13c6d071607f21\"",
+    "id": 7
 },
 {
     "domain": ".instagram.com",
-    "expirationDate": 1660891914.323459,
+    "expirationDate": 1660973377.995427,
     "hostOnly": false,
     "httpOnly": true,
     "name": "sessionid",
@@ -86,7 +99,7 @@
     "secure": true,
     "session": false,
     "storeId": "0",
-    "value": "49266232086%3A4NgqFfDYbcqUMi%3A9",
-    "id": 7
+    "value": "49266232086%3A3eBDgzNTngsCFe%3A11",
+    "id": 8
 }
 ]

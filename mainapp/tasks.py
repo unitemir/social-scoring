@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 from conf.celery import app
 from .main import InstagramStats
 from .models import Person
-from .utils import get_random_number
+from .utils import *
 
 import os
 import re
@@ -27,98 +27,97 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from bs4 import BeautifulSoup as bs
 
+from random_user_agent.user_agent import UserAgent
+from random_user_agent.params import SoftwareName, OperatingSystem
+
 
 @app.task()
 def get_instagram_friend_list_by_instagram_username(instagram_username):
-    proxies = [
-        '212.60.22.150:65233',
-        '185.180.109.249:65233',
-        '193.233.80.131:65233',
-        '194.116.162.155:65233'
-    ]
 
-    user_agents = [
-        'Mozilla/5.0 (Linux Android 10 M2006C3MG) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36',
-        'Mozilla/5.0 (Linux Android 7.1.2 Redmi Note 5A Prime Build/N2G47H wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.87 Mobile Safari/537.36',
-        'Mozilla/5.0 (Linux Android 7.0 SAMSUNG SM-G928F/G928FXXS5CRH1) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.0 Chrome/87.0.4280.141 Mobile Safari/537.36',
-        'Mozilla/5.0 (Linux Android 10 RMX2020 Build/QP1A.190711.020 wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.96 Mobile Safari/537.36',
-    ]
+    def get_friends_list_by_instagram_username(instagram_username):
+        proxies = [
+            '212.60.22.150:65233',
+            '185.180.109.249:65233',
+            '193.233.80.131:65233',
+            '194.116.162.155:65233'
+        ]
 
-    chrome_options = webdriver.ChromeOptions()
+        software_names = [SoftwareName.CHROME.value]
+        operating_systems = [OperatingSystem.WINDOWS.value,
+                             OperatingSystem.LINUX.value]
+        user_agent_rotator = UserAgent(software_names=software_names,
+                                       operating_systems=operating_systems,
+                                       limit=100)
+        user_agent = user_agent_rotator.get_random_user_agent()
 
-    chrome_options.add_argument('--headless')
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--disable-dev-shm-usage')
-    chrome_options.add_argument('--window-size-1420,1080')
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument(f'user-agent={choice(user_agents)}')
-    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+        chrome_options = webdriver.ChromeOptions()
 
-    proxy_options = {
-        'proxy': {
-            'https': f'https://3010egh:J9g8TdC@{choice(proxies)}',
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        chrome_options.add_argument('--window-size-1420,1080')
+        chrome_options.add_argument('--disable-gpu')
+        chrome_options.add_argument(f'user-agent={user_agent}')
+        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+
+        proxy_options = {
+            'proxy': {
+                'https': f'https://3010egh:J9g8TdC@{choice(proxies)}',
+            }
         }
-    }
 
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options,
-                              seleniumwire_options=proxy_options)
-    driver.get('https://www.instagram.com/')
-    driver.implicitly_wait(60)
-    try:
-        btn = driver.find_element_by_xpath('/html/body/div[1]/section/main/article/div/div/div/div[3]/button[1]')
-        btn.click()
-    except:
-        pass
-    time.sleep(3)
-    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.NAME, 'username')))
-    driver.find_element_by_name('username').send_keys('selen_test8237')
-    passwd = driver.find_element_by_name('password')
-    passwd.send_keys('testselen1234')
-    passwd.send_keys(Keys.ENTER)
-    time.sleep(5)
-    try:
-        driver.find_element_by_class_name('cmbtv').click()
-    except:
-        pass
-    time.sleep(10)
-    print(datetime.today().strftime(f'%H:%M:%S | Авторизация в Instagram выполнена.'))
+        driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options,
+                                  seleniumwire_options=proxy_options)
+        driver.get('https://www.instagram.com/')
 
-    driver.get(f'https://www.instagram.com/{instagram_username}/')
+        with open('/code/mainapp/cookies_jsons/cookie_inst.json', 'r', newline='') as inputdata:
+            cookies = json.load(inputdata)
+            for cookie in cookies:
+                driver.add_cookie(cookie)
 
-    followers = driver.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[3]')
-    followers.click()
+        time.sleep(get_random_number())
+        driver.refresh()
+        time.sleep(get_random_number())
 
-    friends = set()
-    try:
-        driver.find_element_by_class_name('PZuss')
-        pop_up_window = WebDriverWait(
-            driver, 2).until(EC.element_to_be_clickable((By.XPATH, "//div[@class='isgrP']")))
-        i = 1
-        fr = list()
-        while True:
-            driver.execute_script(
-                'arguments[0].scrollTop = arguments[0].scrollTop + arguments[0].offsetHeight;',
-                pop_up_window)
-            soup = bs(driver.page_source, 'html.parser')
-            fr.append(len(soup.find_all('li', {"class": "wo9IH"})))
-            if i % 10 == 0:
-                if len(set(fr)) == 1:
-                    break
-                fr = []
-            i += 1
-            time.sleep(3)
-    except:
-        pass
-    time.sleep(3)
-    for element in soup.find_all(class_="FPmhX"):
-        link = element.get('href')
-        friends.add(link)
+        driver.implicitly_wait(60)
+        driver.get(f'https://www.instagram.com/{instagram_username}/')
 
-    print(friends)
-    print(len(friends))
+        followers = driver.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[3]')
+        followers.click()
 
-    driver.close()
-    driver.quit()
+        friends = set()
+        try:
+            driver.find_element_by_class_name('PZuss')
+            pop_up_window = WebDriverWait(
+                driver, 2).until(EC.element_to_be_clickable((By.XPATH, "//div[@class='isgrP']")))
+            i = 1
+            fr = list()
+            while True:
+                driver.execute_script(
+                    'arguments[0].scrollTop = arguments[0].scrollTop + arguments[0].offsetHeight;',
+                    pop_up_window)
+                soup = bs(driver.page_source, 'html.parser')
+                fr.append(len(soup.find_all('li', {"class": "wo9IH"})))
+                if i % 10 == 0:
+                    if len(set(fr)) == 1:
+                        break
+                    fr = []
+                i += 1
+                time.sleep(3)
+        except:
+            pass
+        time.sleep(3)
+        for element in soup.find_all(class_="FPmhX"):
+            link = element.get('href')
+            friends.add(link)
+
+        driver.close()
+        driver.quit()
+        return del_slashes(friends)
+
+    res = get_friends_list_by_instagram_username(instagram_username)
+    print(res)
+    print(len(res))
 
     return True
 
