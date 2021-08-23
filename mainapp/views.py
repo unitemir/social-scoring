@@ -3,6 +3,8 @@ from rest_framework.response import Response
 
 from .tasks import *
 
+from django.shortcuts import render
+
 
 class GetSocialNetworksStatsView(APIView):
 
@@ -14,7 +16,7 @@ class GetSocialNetworksStatsView(APIView):
             get_facebook_person_friend_list.delay(username)
             return Response({'response': 'Facebook task has been running'})
         if social_network == 'VK':
-            create_new_vk_person.delay(username)
+            get_vk_friend_list_by_vk_id.delay(username)
             return Response({'response': 'VK task has been running'})
 
 

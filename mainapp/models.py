@@ -14,7 +14,7 @@ class Person(MPTTModel):
     avg_amount_likes_on_last_20_posts = models.FloatField('Среднее количество лайков на последних 20 постах', null=True, blank=True)
 
     class MPTTMeta:
-        order_insertion_by = ['name']
+        order_insertion_by = ['full_name']
 
     def __str__(self):
         return self.full_name
