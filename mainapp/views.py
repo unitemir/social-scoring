@@ -14,6 +14,9 @@ class GetSocialNetworksStatsView(APIView):
             get_facebook_person_friend_list.delay(username)
             return Response({'response': 'Facebook task has been running'})
         if social_network == 'VK':
-            # create_new_vk_person.delay(username)
-            # return Response({'response': 'VK task has been running'})
-            pass
+            create_new_vk_person.delay(username)
+            return Response({'response': 'VK task has been running'})
+
+
+def show_persons(request):
+    return render(request, "persons.html", {'persons': Person.objects.all()})
