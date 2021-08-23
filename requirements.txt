@@ -81,3 +81,4 @@ webdriver-manager==3.4.2
 wsproto==1.0.0
 zipp==3.5.0
 flower==0.9.7
+django-mptt==0.13.1

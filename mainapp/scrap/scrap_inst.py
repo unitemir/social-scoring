@@ -81,8 +81,12 @@ class Instagram:
 
         self.driver.implicitly_wait(60)
         self.driver.get(f'https://www.instagram.com/{inst_username}/')
-        followers = self.driver.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[3]')
-        followers.click()
+
+        try:
+            followers = self.driver.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[3]')
+            followers.click()
+        except:
+            return []
 
         friends = set()
         try:
