@@ -23,6 +23,20 @@ services:
     depends_on:
       - django
       - rabbitmq
+  flower:
+    container_name: scrap_task_flower
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5555:5555"
+    volumes:
+      - .:/code
+    depends_on:
+      - django
+      - rabbitmq
+      - celery
+    command: celery -A conf.celery flower
   selenium-hub:
     restart: always
     image: selenium/hub:3.14.0
