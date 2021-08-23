@@ -61,9 +61,8 @@ def get_instagram_friend_list_by_instagram_username(instagram_username):
 
 @app.task()
 def get_vk_friend_list_by_vk_id(vk_id):
-    access_token = '23c80a4e23c80a4e23c80a4ee523b0e924223c823c80a4e42d9073819b94c55e72fc001'
-    root = vk_id
 
+    access_token = '23c80a4e23c80a4e23c80a4ee523b0e924223c823c80a4e42d9073819b94c55e72fc001'
 
     def get_friends_list_by_vk_id(vk_id):
         get_vk_id_url = f'https://api.vk.com/method/users.get?user_ids={vk_id}&v=5.92&access_token={access_token}'
@@ -72,28 +71,30 @@ def get_vk_friend_list_by_vk_id(vk_id):
         user_friends_list = requests.get(get_user_friends_list_url).json()['response']['items']
         return [friend['domain'] for friend in user_friends_list]
 
+    try:
+        root_object = Person.objects.get(full_name=vk_id)
+    except:
+        root_object = Person.objects.create(full_name=vk_id)
 
-    for friend in get_friends_list_by_vk_id(root):
+    for root_friend in get_friends_list_by_vk_id(vk_id):
         try:
-            print(friend, 'root person friend')
-            print(get_friends_list_by_vk_id(friend))
-            print()
-        except:
-            continue
-        for friend_lvl_2 in get_friends_list_by_vk_id(friend):
             try:
-                print(friend_lvl_2, 'friend lvl 2')
-                print(get_friends_list_by_vk_id(friend_lvl_2))
-                print()
+                root_friend_object = Person.objects.get(full_name=root_friend)
             except:
-                continue
-            for friend_lvl_3 in get_friends_list_by_vk_id(friend_lvl_2):
+                root_friend_object = Person.objects.create(full_name=root_friend, parent=root_object)
+
+            for friend_lvl_2 in get_friends_list_by_vk_id(root_friend):
                 try:
-                    print(friend_lvl_3, 'friend lvl 3')
-                    print(get_friends_list_by_vk_id(friend_lvl_3))
-                    print()
+                    try:
+                        friend_lvl_2_object = Person.objects.get(full_name=friend_lvl_2)
+                    except:
+                        friend_lvl_2_object = Person.objects.create(full_name=friend_lvl_2, parent=root_friend_object)
                 except:
                     continue
+        except:
+            continue
+
+    return True
 
 
 @app.task()
