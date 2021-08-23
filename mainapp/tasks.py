@@ -23,15 +23,15 @@ from .scrap.scrap_fb import Facebook
 @app.task()
 def get_instagram_friend_list_by_instagram_username(instagram_username):
 
-    inst = Instagram('elenaveselova3854', 'eKp7AMhoER')
+    inst = Instagram('fevroniia8667', 'RmhPX76sq7')
     inst.auth()
 
     try:
         root_object = Person.objects.get(full_name=instagram_username)
     except:
         root_object = Person.objects.create(full_name=instagram_username)
-
-    for root_friend in inst.get_friends_list_by_instagram_username(instagram_username):
+    friends = inst.get_friends_list_by_instagram_username(instagram_username)
+    for root_friend in friends:
         try:
             try:
                 root_friend_object = Person.objects.get(full_name=root_friend)
