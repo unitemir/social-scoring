@@ -41,15 +41,16 @@ def get_instagram_friend_list_by_instagram_username(instagram_username):
             except:
                 root_friend_object = Person.objects.create(full_name=root_friend, parent=root_object)
 
-            for friend_lvl_2 in inst.get_friends_list_by_instagram_username(root_friend):
-                try:
-                    try:
-                        friend_lvl_2_object = Person.objects.get(full_name=friend_lvl_2)
-                        continue
-                    except:
-                        friend_lvl_2_object = Person.objects.create(full_name=friend_lvl_2, parent=root_friend_object)
-                except:
-                    continue
+            # friends_lvl_2 = inst.get_friends_list_by_instagram_username(root_friend)
+            # for friend_lvl_2 in friends_lvl_2:
+            #     try:
+            #         try:
+            #             friend_lvl_2_object = Person.objects.get(full_name=friend_lvl_2)
+            #             continue
+            #         except:
+            #             friend_lvl_2_object = Person.objects.create(full_name=friend_lvl_2, parent=root_friend_object)
+            #     except:
+            #         continue
         except:
             continue
     inst.close_browser()
