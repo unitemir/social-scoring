@@ -10,7 +10,7 @@ class MainView(APIView):
 
     def get(self, request, social_network, username):
         if social_network == 'Instagram':
-            create_instagram_person_three.delay(username)
+            get_instagram_friend_list_by_instagram_username.delay(username)
             return Response({'response': 'Instagram task has been running'})
         if social_network == 'Facebook':
             create_facebook_person_three.delay(username)
