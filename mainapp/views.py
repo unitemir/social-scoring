@@ -6,7 +6,7 @@ from .tasks import *
 from django.shortcuts import render
 
 
-class GetSocialNetworksStatsView(APIView):
+class MainView(APIView):
 
     def get(self, request, social_network, username):
         if social_network == 'Instagram':
