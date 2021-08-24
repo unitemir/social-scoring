@@ -21,7 +21,7 @@ from .grabber.instagram import InstagramStats
 
 
 @app.task()
-def create_instagram_person_three(instagram_username)
+def create_instagram_person_three(instagram_username):
     inst = Instagram('fevroniia8667', 'RmhPX76sq7')
     inst.auth()
     inst.close_browser()
@@ -30,7 +30,8 @@ def create_instagram_person_three(instagram_username)
 
 @app.task()
 def create_vk_person_three(vk_id):
-    return True
+    print('asd')
+    return vk_id
 
 
 @app.task()
