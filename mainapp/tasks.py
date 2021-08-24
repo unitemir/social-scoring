@@ -21,33 +21,13 @@ from .grabber.facebook import Facebook
 
 
 @app.task()
-def get_instagram_friend_list_by_instagram_username(instagram_username):
+def get_instagram_friend_list_by_username(instagram_username):
 
     inst = Instagram('fevroniia8667', 'RmhPX76sq7')
     inst.auth()
 
-    try:
-        root_object = Person.objects.get(full_name=instagram_username)
-    except:
-        root_object = Person.objects.create(full_name=instagram_username)
-    friends = inst.get_friends_list_by_instagram_username(instagram_username)
-    for root_friend in friends:
-        try:
-            try:
-                root_friend_object = Person.objects.get(full_name=root_friend)
-            except:
-                root_friend_object = Person.objects.create(full_name=root_friend, parent=root_object)
 
-            for friend_lvl_2 in inst.get_friends_list_by_instagram_username(root_friend):
-                try:
-                    try:
-                        friend_lvl_2_object = Person.objects.get(full_name=friend_lvl_2)
-                    except:
-                        friend_lvl_2_object = Person.objects.create(full_name=friend_lvl_2, parent=root_friend_object)
-                except:
-                    continue
-        except:
-            continue
+
     inst.close_browser()
     return True
 
