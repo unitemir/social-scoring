@@ -7,7 +7,7 @@ class Person(MPTTModel):
     full_name = models.CharField('ФИО', max_length=128)
     score = models.FloatField('Рейтинг', null=True, blank=True)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
-    stats = models.ForeignKey('PersonStats', on_delete=models.CASCADE)
+    stats = models.ForeignKey('PersonStats', on_delete=models.CASCADE, null=True, blank=True)
 
     class MPTTMeta:
         order_insertion_by = ['full_name']

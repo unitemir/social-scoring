@@ -1,19 +1,11 @@
 version: "3.9"
 services:
-  db:
-    image: postgres
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
   django:
     build: .
     working_dir: /code
     volumes:
       - .:/code
-    command: bash -c "python manage.py makemigrations --noinput && python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000 --nothreading --noreload"
+    command: bash -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000 --nothreading --noreload"
     ports:
       - "8000:8000"
   rabbitmq:
@@ -22,7 +14,6 @@ services:
       - '15672:15672'
     depends_on:
       - django
-      - db
   celery:
     build: .
     working_dir: /code
