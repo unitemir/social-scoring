@@ -18,3 +18,19 @@ class Person(MPTTModel):
 
     def __str__(self):
         return self.full_name
+
+
+class InstagramAccount(models.Model):
+
+    login = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
+
+
+class FacebookAccount(models.Model):
+
+    cookie_json = models.TextField()
+
+
+class Proxy(models.Model):
+
+    ip = models.CharField(max_length=255)

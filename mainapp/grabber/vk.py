@@ -26,6 +26,13 @@ class VK:
         r = requests.get(url)
         return r.json()['response']['users']['count']
 
+    def get_friends_list_by_vk_id(self, vk_id):
+        get_vk_id_url = f'https://api.vk.com/method/users.get?user_ids={vk_id}&v=5.92&access_token={self.access_token}'
+        get_vk_id = requests.get(get_vk_id_url).json()['response'][0]['id']
+        get_user_friends_list_url = f'https://api.vk.com/method/friends.get?user_id={get_vk_id}&fields=domain&v=5.92&access_token={access_token}'
+        user_friends_list = requests.get(get_user_friends_list_url).json()['response']['items']
+        return [friend['domain'] for friend in user_friends_list]
+
     # def get_avg_amount_likes_on_all_posts(self):
     #     avg_amount_likes_on_last_20_posts = 0
     #     url = f'https://api.vk.com/method/wall.get?owner_id={user_id}&count=100&v=5.92&access_token={access_token}'
