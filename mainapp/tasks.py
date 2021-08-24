@@ -1,6 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 from conf.celery import app
-from .main import InstagramStats
+from .grabber.instagram import InstagramStats
 from .models import Person
 from .utils import *
 
@@ -9,15 +9,15 @@ import re
 import time
 import requests
 import json
-# import glob
+import glob
 import random
 
 from datetime import datetime
 
 from random import choice
 
-from .scrap.scrap_inst import Instagram
-from .scrap.scrap_fb import Facebook
+from .grabber.instagram import Instagram
+from .grabber.facebook import Facebook
 
 
 @app.task()

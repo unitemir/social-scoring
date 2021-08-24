@@ -16,12 +16,19 @@ class Facebook:
 
     def __init__(self, fb_username=None):
         self.fb_username = fb_username
+
         proxies = [
             '212.60.22.150:65233',
             '185.180.109.249:65233',
             '193.233.80.131:65233',
             '194.116.162.155:65233'
         ]
+
+        proxy_options = {
+            'proxy': {
+                'https': f'https://3010egh:J9g8TdC@{choice(proxies)}',
+            }
+        }
 
         software_names = [SoftwareName.CHROME.value]
         operating_systems = [OperatingSystem.WINDOWS.value,
@@ -30,8 +37,8 @@ class Facebook:
                                        operating_systems=operating_systems,
                                        limit=100)
         user_agent = user_agent_rotator.get_random_user_agent()
-        chrome_options = webdriver.ChromeOptions()
 
+        chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
@@ -39,12 +46,6 @@ class Facebook:
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument(f'user-agent={user_agent}')
         chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-
-        proxy_options = {
-            'proxy': {
-                'https': f'https://3010egh:J9g8TdC@{choice(proxies)}',
-            }
-        }
 
         self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options,
                                        seleniumwire_options=proxy_options)
@@ -95,3 +96,37 @@ class Facebook:
                 self.total_friends[el.text.strip()] = el.get('href')
         self.driver_close()
         return self.total_friends
+
+    def get_valid_data(self):
+        # driver.get(f'https://m.facebook.com/profile.php?id={facebook_id}')
+        valid_data = []
+        last_height = driver.execute_script("return document.body.scrollHeight")
+        while True:
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(get_random_number())
+            likes_class = driver.find_elements_by_class_name('_1g06')
+            for i in likes_class:
+                try:
+                    integer = int(i.text)
+                    valid_data.append(integer)
+                except:
+                    pass
+            time.sleep(get_random_number())
+            new_height = driver.execute_script("return document.body.scrollHeight")
+            if new_height == last_height:
+                break
+            last_height = new_height
+            return valid_data
+
+    def get_avg_likes_on_posts(self):
+        avg_amount_likes_on_all_posts = 0
+        avg_amount_likes_on_last_20_posts = 0
+        try:
+            avg_amount_likes_on_all_posts = sum(valid_data) / len(valid_data)
+            if len(valid_data) >= 20:
+                avg_amount_likes_on_last_20_posts = sum(valid_data[:20]) / 20
+            if len(valid_data) <= 20:
+                avg_amount_likes_on_last_20_posts = avg_amount_likes_on_all_posts
+        except:
+            pass
+        return
