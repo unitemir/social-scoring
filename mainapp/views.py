@@ -10,13 +10,13 @@ class GetSocialNetworksStatsView(APIView):
 
     def get(self, request, social_network, username):
         if social_network == 'Instagram':
-            get_instagram_friend_list_by_instagram_username.delay(username)
+            create_instagram_person_three.delay(username)
             return Response({'response': 'Instagram task has been running'})
         if social_network == 'Facebook':
-            get_facebook_person_friend_list.delay(username)
+            create_facebook_person_three.delay(username)
             return Response({'response': 'Facebook task has been running'})
         if social_network == 'VK':
-            get_vk_friend_list_by_vk_id.delay(username)
+            create_vk_person_three.delay(username)
             return Response({'response': 'VK task has been running'})
 
 
