@@ -17,12 +17,12 @@ class Person(MPTTModel):
 
 
 class PersonStats(models.Model):
+
     qty_subscribers = models.PositiveIntegerField('Количество подписчиков', null=True, blank=True)
     subscriptions = models.PositiveIntegerField('Количество подписок', null=True, blank=True)
     qty_posts = models.PositiveIntegerField('Количество постов', null=True, blank=True)
     avg_amount_likes_on_all_posts = models.FloatField('Среднее количество лайков на всех постах', null=True, blank=True)
-    avg_amount_likes_on_last_20_posts = models.FloatField('Среднее количество лайков на последних 20 постах', null=True,
-                                                          blank=True)
+    avg_amount_likes_on_last_20_posts = models.FloatField('Среднее количество лайков на последних 20 постах', null=True, blank=True)
 
 
 class InstagramAccount(models.Model):
