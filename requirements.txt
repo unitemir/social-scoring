@@ -83,3 +83,4 @@ zipp==3.5.0
 flower==0.9.7
 django-mptt==0.13.1
 psycopg2-binary==2.8.6
+django-mptt==0.13.1

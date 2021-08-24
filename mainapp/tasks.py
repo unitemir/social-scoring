@@ -1,11 +1,13 @@
 from __future__ import absolute_import, unicode_literals
 from conf.celery import app
-
+from .grabber.instagram import InstagramStats
 from .models import Person
 from .utils import *
 
-from datetime import datetime
-
+import os
+import re
+import time
+import requests
 import json
 import glob
 import requests
@@ -13,12 +15,14 @@ import time
 import re
 import os
 import random
+
+from datetime import datetime
+
 from random import choice
 
 from .grabber.instagram import Instagram
 from .grabber.facebook import Facebook
 from .grabber.instagram import InstagramStats
-
 from .grabber.vk import VK
 
 
@@ -27,8 +31,7 @@ def create_instagram_person_three(instagram_username):
     inst = Instagram('elenaveselova3854', 'eKp7AMhoER')
     inst.auth()
 
-
-    root_object = Person.objects.create(full_name=vk_id)
+    root_object = Person.objects.create(full_name=instagram_username)
     friends = inst.get_friends_list_by_instagram_username(instagram_username)
     for root_friend in friends:
         try:

@@ -41,18 +41,18 @@ class Instagram:
         self.password = password
         self.inst_username = inst_username
 
-        proxies = [
-            '212.60.22.150:65233',
-            '185.180.109.249:65233',
-            '193.233.80.131:65233',
-            '194.116.162.155:65233'
-        ]
+        # proxies = [
+        #     '212.60.22.150:65233',
+        #     '185.180.109.249:65233',
+        #     '193.233.80.131:65233',
+        #     '194.116.162.155:65233'
+        # ]
 
-        proxy_options = {
-            'proxy': {
-                'https': f'https://3010egh:J9g8TdC@{choice(proxies)}',
-            }
-        }
+        # proxy_options = {
+        #     'proxy': {
+        #         'https': f'https://3010egh:J9g8TdC@{choice(proxies)}',
+        #     }
+        # }
 
         software_names = [SoftwareName.CHROME.value]
         operating_systems = [OperatingSystem.WINDOWS.value,
@@ -72,7 +72,7 @@ class Instagram:
         chrome_options.add_argument("--disable-blink-features=AutomationControlled")
 
         self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options,
-                                       seleniumwire_options=proxy_options)
+                                      ) #seleniumwire_options=proxy_options
 
     def auth(self):
         self.driver.get('https://instagram.com/')
