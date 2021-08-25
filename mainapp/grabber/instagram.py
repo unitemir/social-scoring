@@ -141,8 +141,8 @@ class InstagramStats:
         username = self.bot.search_users(full_name)[n]
         return username
 
-    def get_follwoing_len(self, username):
-        return len(self.bot.get_user_following(username))
+    def get_follwoing(self, username):
+        return self.bot.get_user_following(username)
 
     def get_followers_len(self, username):
         return len(self.bot.get_user_followers(username))
