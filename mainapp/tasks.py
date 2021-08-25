@@ -27,7 +27,7 @@ def get_instagram_friend_list_by_instagram_username(instagram_username):
 
     inst = Instagram('fevroniia8667', 'ZqmkM0Pp')
     inst.auth()
-
+    print()
     root_object = Person.objects.create(full_name=instagram_username)
     friends = inst.get_friends_list_by_instagram_username(instagram_username)
     print(friends, "FRIENDS")
