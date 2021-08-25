@@ -94,6 +94,9 @@ class Instagram:
 
         try:
             followers = self.driver.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[3]')
+            foll = followers.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[3]/a/span')
+            if int(foll.text) > 500:
+                return ['dalbaeb s 500 + podpiskami']
             followers.click()
         except:
             return []
@@ -118,7 +121,7 @@ class Instagram:
                 i += 1
                 time.sleep(3)
         except:
-            pass
+            return []
         time.sleep(3)
         for elem in soup.find_all(class_='PZuss'):
             for el in elem.find_all('li'):
