@@ -118,7 +118,7 @@ class Instagram:
                 i += 1
                 time.sleep(3)
         except:
-            pass
+            return []
         time.sleep(3)
         for elem in soup.find_all(class_='PZuss'):
             for el in elem.find_all('li'):
@@ -138,8 +138,8 @@ class InstagramStats:
         username = self.bot.search_users(full_name)[n]
         return username
 
-    def get_follwoing_len(self, username):
-        return len(self.bot.get_user_following(username))
+    def get_follwoing(self, username):
+        return self.bot.get_user_following(username)
 
     def get_followers_len(self, username):
         return len(self.bot.get_user_followers(username))
