@@ -8,6 +8,8 @@ class Person(MPTTModel):
     score = models.FloatField('Рейтинг', null=True, blank=True)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
     stats = models.ForeignKey('PersonStats', on_delete=models.CASCADE, null=True, blank=True)
+    first_friends_level = models.BooleanField(default=False)
+    second_friends_level = models.BooleanField(default=False)
 
     class MPTTMeta:
         order_insertion_by = ['full_name']

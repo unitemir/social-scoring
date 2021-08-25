@@ -63,7 +63,6 @@ def create_vk_person_three(vk_id):
         except:
             return []
 
-
     root_object = Person.objects.create(full_name=root)
 
     for friend in get_friends_list_by_vk_id(root):
