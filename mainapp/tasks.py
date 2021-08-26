@@ -25,20 +25,21 @@ from .grabber.vk import VK
 @app.task()
 def get_instagram_friend_list_by_instagram_username(instagram_username):
 
-    inst = Instagram('fevroniia8667', 'ZqmkM0Pp')
+    inst = Instagram('liudmilaorekhova4016', 'xUZFoGbPu8')
     inst.auth()
     print()
     root_object = Person.objects.create(full_name=instagram_username)
     friends = inst.get_friends_list_by_instagram_username(instagram_username)
     print(friends, "FRIENDS")
     for root_friend in friends:
-        Person.objects.create(full_name=root_friend, parent=root_object)
-    for root_friend in friends:
-        root_friend_object = Person.objects.get(full_name=root_friend, parent=root_object)
-        for friend_lvl_2 in inst.get_friends_list_by_instagram_username(root_friend):
-            friend_lvl_2_object = Person.objects.create(full_name=friend_lvl_2, parent=root_friend_object)
+        rf = Person.objects.create(full_name=root_friend)
+        root_object.add_relationship(rf, 1)
+    for root_friend in root_object.get_following():
+        for friend_lvl_2 in inst.get_friends_list_by_instagram_username(root_friend.full_name):
+            friend_lvl_2_object = Person.objects.create(full_name=friend_lvl_2)
+            root_friend.add_relationship(friend_lvl_2_object, 1)
     inst.close_browser()
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa")
+    print("a"*55)
     return True
 
 
