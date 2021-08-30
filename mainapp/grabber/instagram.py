@@ -85,6 +85,7 @@ class Instagram:
         time.sleep(5)
 
     def close_browser(self):
+        self.driver.close()
         self.driver.quit()
 
     def get_friends_list_by_instagram_username(self, inst_username):
