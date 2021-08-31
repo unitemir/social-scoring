@@ -40,7 +40,7 @@ class Instagram:
         self.login = login
         self.password = password
         self.inst_username = inst_username
-
+        self.username =''
         # proxies = [
         #     '212.60.22.150:65233',
         #     '185.180.109.249:65233',
@@ -76,7 +76,7 @@ class Instagram:
 
     def auth(self):
         self.driver.get('https://instagram.com/')
-        time.sleep(round(get_random_number(), 3))
+        time.sleep(random.uniform(1, 3))
         WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.NAME, 'username')))
         self.driver.find_element_by_name('username').send_keys(self.login)
         passwd = self.driver.find_element_by_name('password')
@@ -94,15 +94,17 @@ class Instagram:
         self.driver.get(f'https://www.instagram.com/{inst_username}/')
 
         try:
-            followers = self.driver.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[3]')
-            foll = followers.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[3]/a/span')
-            if int(foll.text) > 500:
+            followers = self.driver.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[3]/a/span')
+            print('FOLLOWERS NUM:', followers)
+            if int(followers.text) > 500:
                 return ['dalbaeb s 500 + podpiskami']
+            if int(followers.text) == 0:
+                return []
             followers.click()
         except:
             return []
 
-        friends = set()
+        friends = dict()
         try:
             self.driver.find_element_by_class_name('PZuss')
             pop_up_window = WebDriverWait(
@@ -120,17 +122,17 @@ class Instagram:
                         break
                     fr = []
                 i += 1
-                time.sleep(3)
+                time.sleep(random.uniform(1, 3))
         except:
             return []
-        time.sleep(3)
+        time.sleep(random.uniform(1, 3))
+        self.username = soup.find(class_='rhpdm').text
         for elem in soup.find_all(class_='PZuss'):
             for el in elem.find_all('li'):
-                for e in el.find_all('a'):
-                    friends.add(e.get('href'))
-        friends = set(friends)
-
-        return del_slashes(friends)
+                name = el.find(class_='wFPL8').text
+                username = el.find('a').get('href')
+                friends[name] = username
+        return friends
 
 
 class InstagramStats:
@@ -191,4 +193,3 @@ class InstagramStats:
         twony_last_medias = self.bot.get_user_medias(username, filtration=None)
         for e, media_id in enumerate(twony_last_medias):
             self.download_photo(media_id, "img_" + str(e))
-
