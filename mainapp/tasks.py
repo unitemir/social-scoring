@@ -29,14 +29,33 @@ def get_instagram_friend_list_by_instagram_username(instagram_username):
     friends = inst.get_friends_list_by_instagram_username(instagram_username)
     root_object, created = Person.objects.get_or_create(full_name=inst.username, username=instagram_username)
     for root_friend in friends:
-        rf, created = Person.objects.get_or_create(username=friends[root_friend], full_name=root_friend)
+        rf, created = Person.objects.get_or_create(username=friends[root_friend][1:-1], full_name=root_friend)
         root_object.add_relationship(rf, 1)
     for root_friend in root_object.get_following():
-        for friend_lvl_2 in inst.get_friends_list_by_instagram_username(root_friend.full_name):
-            friend_lvl_2_object, created = Person.objects.get_or_create(full_name=friend_lvl_2)
+        friends_f = inst.get_friends_list_by_instagram_username(root_friend.username)
+        for friend_lvl_2 in inst.get_friends_list_by_instagram_username(root_friend.username):
+            friend_lvl_2_object, created = Person.objects.get_or_create(username=friends_f[friend_lvl_2][1:-1], full_name=friend_lvl_2)
             root_friend.add_relationship(friend_lvl_2_object, 1)
     inst.close_browser()
     print("a" * 55)
+    return True
+
+
+@app.task()
+def create_facebook_person_three(facebook_id):
+    fb = Facebook()
+    fb.auth()
+    friends = fb.get_friends_list_by_face_book_id(facebook_id)
+    root_object, created = Person.objects.get_or_create(username=facebook_id[1::], full_name=fb.object_name)
+    for root_friend in friends:
+        rf, created = Person.objects.get_or_create(username=friends[root_friend][1::], full_name=root_friend)
+        root_object.add_relationship(rf, 1)
+    for root_friend in root_object.get_following():
+        friends_f = fb.get_friends_list_by_face_book_id(root_friend.username)
+        for friend_lvl_2 in friends_f:
+            friend_lvl_2_object, created = Person.objects.get_or_create(username=friends_f[friend_lvl_2][1::], full_name=friend_lvl_2)
+            root_friend.add_relationship(friend_lvl_2_object, 1)
+    fb.driver_close()
     return True
 
 
@@ -70,20 +89,3 @@ def create_vk_person_three(vk_id):
     return True
 
 
-@app.task()
-def create_facebook_person_three(facebook_id):
-    fb = Facebook()
-    fb.auth()
-    friends = fb.get_friends_list_by_face_book_id(facebook_id)
-    root_object, created = Person.objects.get_or_create(username=facebook_id[1::], full_name=fb.object_name)
-    for root_friend in friends:
-        rf, created = Person.objects.get_or_create(username=friends[root_friend][1::], full_name=root_friend)
-        root_object.add_relationship(rf, 1)
-    for root_friend in root_object.get_following():
-        print("ROOT FRIEND USERNAME:", root_friend.username)
-        friends_f = fb.get_friends_list_by_face_book_id(root_friend.username)
-        for friend_lvl_2 in friends_f:
-            friend_lvl_2_object, created = Person.objects.get_or_create(username=friends_f[friend_lvl_2][1::], full_name=friend_lvl_2)
-            root_friend.add_relationship(friend_lvl_2_object, 1)
-    fb.driver_close()
-    return True

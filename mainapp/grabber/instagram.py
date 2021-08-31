@@ -127,11 +127,18 @@ class Instagram:
             return []
         time.sleep(random.uniform(1, 3))
         self.username = soup.find(class_='rhpdm').text
-        for elem in soup.find_all(class_='PZuss'):
-            for el in elem.find_all('li'):
-                name = el.find(class_='wFPL8').text
-                username = el.find('a').get('href')
-                friends[name] = username
+        try:
+            for elem in soup.find_all(class_='PZuss'):
+                for el in elem.find_all('li'):
+                    name = el.find(class_='wFPL8').text
+                    username = el.find('a').get('href')
+                    friends[name] = username
+        except:
+            for elem in soup.find_all(class_='PZuss'):
+                for el in elem.find_all('li'):
+                    username = str(el.find(class_='FPmhX notranslate _0imsa').get('href'))
+                    name = str(el.find(class_='_7UhW9 xLCgt MMzan _0PwGv fDxYl').text)
+                    friends[name] = username
         return friends
 
 
