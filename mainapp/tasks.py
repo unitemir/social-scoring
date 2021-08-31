@@ -89,3 +89,4 @@ def create_facebook_person_three(facebook_id):
             root_friend.add_relationship(friend_lvl_2_object, 1)
     fb.driver_close()
     return True
+

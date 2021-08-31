@@ -191,3 +191,4 @@ class InstagramStats:
         twony_last_medias = self.bot.get_user_medias(username, filtration=None)
         for e, media_id in enumerate(twony_last_medias):
             self.download_photo(media_id, "img_" + str(e))
+
